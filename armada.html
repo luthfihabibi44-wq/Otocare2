@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Armada Terpantau - OtoCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fafafa; color: #111111; letter-spacing: -0.01em; }
+        .navbar-clean { background: #ffffff; border-bottom: 1px solid #eaeaea; }
+        .brand-logo { font-weight: 700; font-size: 1.25rem; color: #111111; display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .panel-card { background: #ffffff; border: 1px solid #eaeaea; border-radius: 12px; padding: 32px; }
+        .table-clean th { font-weight: 600; color: #666666; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; border-bottom: 1px solid #eaeaea; padding-bottom: 16px; }
+        .table-clean td { padding: 18px 0; border-bottom: 1px solid #f5f5f5; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-clean py-3 mb-5">
+        <div class="container">
+            <a class="brand-logo" href="index.html">
+                <i class="bi bi-cpu-fill text-dark"></i> OtoCare <span class="text-muted fw-normal">| Fleet</span>
+            </a>
+            <a href="index.html" class="btn btn-sm btn-dark px-3 fw-medium">Tambah Unit Baru</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="panel-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="fw-bold m-0">Armada Terpantau</h4>
+                    <p class="text-muted small m-0 mt-1">Daftar inventaris unit aktif yang terintegrasi dengan modul analisis telemetri</p>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-clean m-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 30%;">Nama Kendaraan</th>
+                            <th style="width: 20%;">Plat Nomor</th>
+                            <th style="width: 20%;">Jenis Transmisi</th>
+                            <th style="width: 15%;">KM Utama</th>
+                            <th style="width: 15%;" class="text-end">Aksi Operasional</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            
+            const kendaraanList = JSON.parse(localStorage.getItem('kendaraan')) || [];
+
+            if (kendaraanList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-5">Belum ada unit yang didaftarkan.</td></tr>`;
+                return;
+            }
+
+            kendaraanList.forEach(motor => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-semibold text-dark">${motor.nama}</td>
+                    <td><span class="badge bg-light text-dark border font-monospace">${motor.plat}</span></td>
+                    <td class="text-muted">${motor.jenis}</td>
+                    <td class="fw-medium text-dark">${motor.km_sekarang.toLocaleString('id-ID')} KM</td>
+                    <td class="text-end">
+                        <a href="dashboard.html?id=${motor.id}" class="btn btn-sm btn-light border fw-medium px-2.5"><i class="bi bi-cpu text-dark me-1"></i> Analisis Sektor</a>
+                        <a href="edit.html?id=${motor.id}" class="btn btn-sm btn-light text-secondary border px-2 ms-1"><i class="bi bi-pencil"></i></a>
+                        <button onclick="hapusUnit(${motor.id})" class="btn btn-sm btn-light text-danger border px-2 ms-1"><i class="bi bi-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function hapusUnit(id) {
+            if (confirm('Hapus data unit ini secara permanen?')) {
+                let kendaraanList = JSON.parse(localStorage.getItem('kendaraan')) || [];
+                kendaraanList = kendaraanList.filter(m => m.id !== id);
+                localStorage.setItem('kendaraan', JSON.stringify(kendaraanList));
+                renderTable();
+            }
+        }
+
+        // Tampilkan tabel saat dokumen siap
+        document.addEventListener('DOMContentLoaded', renderTable);
+    </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Analisis - OtoCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fafafa; color: #111111; letter-spacing: -0.01em; }
+        .navbar-clean { background: #ffffff; border-bottom: 1px solid #eaeaea; }
+        .panel-card { background: #ffffff; border: 1px solid #eaeaea; border-radius: 12px; padding: 28px; margin-bottom: 24px; }
+        .sector-grid-card { background: #ffffff; border: 1px solid #eaeaea; border-radius: 12px; padding: 20px; height: 100%; transition: border-color 0.2s ease; }
+        .sector-grid-card:hover { border-color: #b5b5b5; }
+        .status-dot { display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; font-weight: 600; padding: 4px 10px; border-radius: 50px; }
+        .dot-success { background: #e6f7ed; color: #1f7a42; }
+        .dot-warning { background: #fff8e6; color: #b27b00; }
+        .dot-danger { background: #fdebee; color: #ca2c43; }
+        .progress-micro { height: 6px; background-color: #f0f0f0; border-radius: 3px; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-clean py-3 mb-5">
+        <div class="container">
+            <span class="navbar-brand fw-bold text-dark m-0">
+                <i class="bi bi-activity text-primary me-2"></i> Dashboard Analisis Telemetri
+            </span>
+            <a href="armada.html" class="btn btn-sm btn-light border px-3 fw-medium">Kembali</a>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        <!-- HEADER KENDARAAN -->
+        <div class="panel-card d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="text-muted small font-monospace text-uppercase" id="txtPlat">--</span>
+                <h3 class="fw-bold m-0 mt-1" id="txtNama">Memuat Nama Unit...</h3>
+                <p class="text-muted small m-0 mt-1" id="txtJenis">Tipe Transmisi: --</p>
+            </div>
+            <div class="text-md-end">
+                <span class="text-muted small d-block">Kilometer Log Utama</span>
+                <h3 class="fw-bold m-0 mt-1 text-primary" id="txtKm">0 KM</h3>
+            </div>
+        </div>
+
+        <!-- RINGKASAN DIAGNOSTIK -->
+        <div class="panel-card">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h5 class="fw-bold m-0">Kesimpulan Algoritma Matriks</h5>
+                <div id="boxStatus"></div>
+            </div>
+            <p class="text-secondary small lh-lg m-0" id="txtSummary">Sedang menjalankan perhitungan komparasi komparatif...</p>
+        </div>
+
+        <h5 class="fw-bold mb-3 mt-4">Matriks Keausan Per Sektor Komponen</h5>
+        
+        <!-- GRID SEKTOR -->
+        <div class="row g-4">
+            <!-- Oli -->
+            <div class="col-md-4">
+                <div class="sector-grid-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="fw-bold small text-uppercase text-muted">Sektor Pelumasan</span>
+                        <span class="badge bg-light text-dark border" id="badge_oli">0%</span>
+                    </div>
+                    <h6 class="fw-bold mb-1">Oli Mesin</h6>
+                    <p class="text-muted small mb-3"><span id="s_k_oli">0 KM</span> / <span id="s_h_oli">0 Hari</span> terlewati</p>
+                    <div class="progress-micro"><div id="p_oli" class="progress-bar" style="width: 0%"></div></div>
+                </div>
+            </div>
+
+            <!-- Mesin -->
+            <div class="col-md-4">
+                <div class="sector-grid-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="fw-bold small text-uppercase text-muted">Sektor Ruang Bakar</span>
+                        <span class="badge bg-light text-dark border" id="badge_mesin">0%</span>
+                    </div>
+                    <h6 class="fw-bold mb-1">Tune-Up & Pengapian</h6>
+                    <p class="text-muted small mb-3"><span id="s_k_mesin">0 KM</span> / <span id="s_h_mesin">0 Hari</span> terlewati</p>
+                    <div class="progress-micro"><div id="p_mesin" class="progress-bar" style="width: 0%"></div></div>
+                </div>
+            </div>
+
+            <!-- Transmisi -->
+            <div class="col-md-4">
+                <div class="sector-grid-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="fw-bold small text-uppercase text-muted" id="lblKategoriTrans">Sektor Penggerak</span>
+                        <span class="badge bg-light text-dark border" id="badge_cvt">0%</span>
+                    </div>
+                    <h6 class="fw-bold mb-1" id="lblTrans">CVT / Rantai</h6>
+                    <p class="text-muted small mb-3"><span id="s_k_cvt">0 KM</span> / <span id="s_h_cvt">0 Hari</span> terlewati</p>
+                    <div class="progress-micro"><div id="p_cvt" class="progress-bar" style="width: 0%"></div></div>
+                </div>
+            </div>
+
+            <!-- Kaki-kaki -->
+            <div class="col-md-4">
+                <div class="sector-grid-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="fw-bold small text-uppercase text-muted">Sistem Pengendalian</span>
+                        <span class="badge bg-light text-dark border" id="badge_kaki">0%</span>
+                    </div>
+                    <h6 class="fw-bold mb-1">Pengereman & Sasis</h6>
+                    <p class="text-muted small mb-3"><span id="s_k_kaki">0 KM</span> / <span id="s_h_kaki">0 Hari</span> terlewati</p>
+                    <div class="progress-micro"><div id="p_kaki" class="progress-bar" style="width: 0%"></div></div>
+                </div>
+            </div>
+
+            <!-- Kelistrikan -->
+            <div class="col-md-4">
+                <div class="sector-grid-card">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <span class="fw-bold small text-uppercase text-muted">Suplai Energi</span>
+                        <span class="badge bg-light text-dark border" id="badge_listrik">0%</span>
+                    </div>
+                    <h6 class="fw-bold mb-1">Kelistrikan & Aki</h6>
+                    <p class="text-muted small mb-3"><span id="s_k_lis">0 KM</span> / <span id="s_h_lis">0 Hari</span> terlewati</p>
+                    <div class="progress-micro"><div id="p_listrik" class="progress-bar" style="width: 0%"></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function hitungHari(tglStr) {
+            if (!tglStr) return 0;
+            const selisihMs = new Date() - new Date(tglStr);
+            return Math.max(0, Math.floor(selisihMs / (1000 * 60 * 60 * 24)));
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const motorId = parseInt(urlParams.get('id'));
+        const kendaraanList = JSON.parse(localStorage.getItem('kendaraan')) || [];
+        const motor = kendaraanList.find(m => m.id === motorId);
+
+        if (motor) {
+            document.getElementById('txtNama').innerText = motor.nama || "Tanpa Nama";
+            document.getElementById('txtPlat').innerText = motor.plat || "--";
+            document.getElementById('txtJenis').innerText = "Tipe Transmisi: " + (motor.jenis || "Matic");
+            document.getElementById('txtKm').innerText = (motor.km_sekarang || 0).toLocaleString('id-ID') + " KM";
+
+            const km_skrg = parseInt(motor.km_sekarang) || 0;
+
+            // S1: OLI
+            const s_hari_oli = hitungHari(motor.tgl_oli);
+            const s_km_oli = Math.max(0, km_skrg - (parseInt(motor.km_oli) || km_skrg));
+            document.getElementById('s_h_oli').innerText = s_hari_oli + " Hari";
+            document.getElementById('s_k_oli').innerText = s_km_oli.toLocaleString('id-ID') + " KM";
+
+            // S2: MESIN
+            const s_hari_mesin = hitungHari(motor.tgl_mesin);
+            const s_km_mesin = Math.max(0, km_skrg - (parseInt(motor.km_mesin) || km_skrg));
+            document.getElementById('s_h_mesin').innerText = s_hari_mesin + " Hari";
+            document.getElementById('s_k_mesin').innerText = s_km_mesin.toLocaleString('id-ID') + " KM";
+
+            // S3: TRANSMISI (CVT / RANTAI)
+            const s_hari_cvt = hitungHari(motor.tgl_cvt);
+            const s_km_cvt = Math.max(0, km_skrg - (parseInt(motor.km_cvt) || km_skrg));
+            document.getElementById('s_h_cvt').innerText = s_hari_cvt + " Hari";
+            document.getElementById('s_k_cvt').innerText = s_km_cvt.toLocaleString('id-ID') + " KM";
+
+            // S4: REM / KAKI-KAKI
+            const s_hari_kaki = hitungHari(motor.tgl_kaki);
+            const s_km_kaki = Math.max(0, km_skrg - (parseInt(motor.km_kaki) || km_skrg));
+            document.getElementById('s_h_kaki').innerText = s_hari_kaki + " Hari";
+            document.getElementById('s_k_kaki').innerText = s_km_kaki.toLocaleString('id-ID') + " KM";
+
+            // S5: KELISTRIKAN
+            const tgl_listrik_fix = motor.tgl_listrik || motor.tgl_lis;
+            const km_listrik_fix = motor.km_listrik || motor.km_lis || km_skrg;
+            const s_hari_listrik = hitungHari(tgl_listrik_fix);
+            const s_km_listrik = Math.max(0, km_skrg - (parseInt(km_listrik_fix) || km_skrg));
+            document.getElementById('s_h_lis').innerText = s_hari_listrik + " Hari";
+            document.getElementById('s_k_lis').innerText = s_km_listrik.toLocaleString('id-ID') + " KM";
+
+            // Setup Batas Dinamis Berdasarkan Jenis Penggerak
+            let nama_transmisi = "Sektor Transmisi (Rantai & Kopling)";
+            let lim_h_trans = 150; 
+            let lim_k_trans = 12000;
+            
+            if (motor.jenis === 'Matic') {
+                nama_transmisi = "Sektor Transmisi (CVT & Gardan)";
+                lim_h_trans = 120; 
+                lim_k_trans = 10000;
+                document.getElementById('lblTrans').innerText = "CVT & Oli Gardan";
+            } else {
+                document.getElementById('lblTrans').innerText = "Rantai, Gir & Kopling";
+            }
+            document.getElementById('lblKategoriTrans').innerText = nama_transmisi;
+
+            // Hitung Persentase Keausan
+            const p_oli = Math.min(100, Math.round((s_km_oli / 2000) * 100)) || 0;
+            const p_mesin = Math.min(100, Math.round((s_km_mesin / 6000) * 100)) || 0;
+            const p_cvt = Math.min(100, Math.round((s_km_cvt / lim_k_trans) * 100)) || 0;
+            const p_kaki = Math.min(100, Math.round((s_km_kaki / 8000) * 100)) || 0;
+            const p_listrik = Math.min(100, Math.round((s_km_listrik / 15000) * 100)) || 0;
+
+            // Render Progress Bar & Badge Persentase
+            const mewarnaiBar = (barId, badgeId, persen) => {
+                const bar = document.getElementById(barId);
+                document.getElementById(badgeId).innerText = persen + "%";
+                bar.style.width = persen + "%";
+                if(persen >= 100) bar.className = "progress-bar bg-danger";
+                else if(persen >= 75) bar.className = "progress-bar bg-warning";
+                else bar.className = "progress-bar bg-success";
+            };
+
+            mewarnaiBar('p_oli', 'badge_oli', p_oli);
+            mewarnaiBar('p_mesin', 'badge_mesin', p_mesin);
+            mewarnaiBar('p_cvt', 'badge_cvt', p_cvt);
+            mewarnaiBar('p_kaki', 'badge_kaki', p_kaki);
+            mewarnaiBar('p_listrik', 'badge_listrik', p_listrik);
+
+            // Logika Evaluasi Kondisi Komponen
+            const perlu_oli = s_hari_oli > 60 || s_km_oli > 2000;
+            const perlu_mesin = s_hari_mesin > 120 || s_km_mesin > 6000;
+            const perlu_transmisi = s_hari_cvt > lim_h_trans || s_km_cvt > lim_k_trans;
+            const perlu_kaki = s_hari_kaki > 90 || s_km_kaki > 8000;
+            const perlu_listrik = s_hari_listrik > 180 || s_km_listrik > 15000;
+
+            let sektor_bermasalah = [];
+            if (perlu_oli) sektor_bermasalah.push("⚠️ <b>Sektor Pelumasan (Oli Mesin)</b>: Sudah melewati ambang batas efisiensi penggantian berkala (Ambang batas: 2.000 KM / 60 Hari).");
+            if (perlu_mesin) sektor_bermasalah.push("⚠️ <b>Sektor Mesin & Pengapian (Tune-Up)</b>: Penumpukan karbon ruang bakar diindikasikan tinggi, butuh pembersihan komponen throttle body.");
+            if (perlu_transmisi) sektor_bermasalah.push(`⚠️ <b>${nama_transmisi}</b>: Batas keausan operasional komponen penggerak terlampaui. Risiko terjadi selip friksi atau anomali mekanis.`);
+            if (perlu_kaki) sektor_bermasalah.push("⚠️ <b>Sistem Pengendalian & Rem</b>: Terdeteksi penurunan viskositas minyak rem atau keausan material gesek (kampas), inspeksi keamanan wajib dilakukan.");
+            if (perlu_listrik) sektor_bermasalah.push("⚠️ <b>Sistem Elektrikal & Aki</b>: Umur pakai cadangan daya sistem kelistrikan memasuki fase rawan penurunan tegangan konstan.");
+
+            const boxStatus = document.getElementById('boxStatus');
+            if (sektor_bermasalah.length === 0) {
+                boxStatus.innerHTML = '<span class="status-dot dot-success"><i class="bi bi-check-circle-fill"></i> Sistem Prima</span>';
+                document.getElementById('txtSummary').innerHTML = "Seluruh parameter matriks telemetri operasional unit terpantau dalam kondisi optimal. Tidak ditemukan anomali mekanis maupun komponen yang melewati siklus ambang batas servis untuk saat ini.";
+            } else {
+                if ((s_hari_oli > 90 || s_km_oli > 3500) || (perlu_transmisi && s_km_cvt > (lim_k_trans + 3000))) {
+                    boxStatus.innerHTML = '<span class="status-dot dot-danger"><i class="bi bi-x-circle-fill"></i> Tindakan Kritis</span>';
+                } else {
+                    boxStatus.innerHTML = '<span class="status-dot dot-warning"><i class="bi bi-exclamation-triangle-fill"></i> Perlu Atensi</span>';
+                }
+                document.getElementById('txtSummary').innerHTML = "Analisis komparasi algoritma mendeteksi penyimpangan efisiensi komponen akibat batas pakai. <b>Berikut daftar sektor operasional utama yang direkomendasikan untuk segera dilakukan tindakan perawatan mekanis:</b><br><br>" + sektor_bermasalah.join("<br>");
+            }
+        } else {
+            document.getElementById('txtSummary').innerHTML = "<span class='text-danger'>Gagal memuat telemetri: ID unit kendaraan tidak valid atau tidak ditemukan di penyimpanan browser.</span>";
+        }
+    </script>
+</body>
+</html>

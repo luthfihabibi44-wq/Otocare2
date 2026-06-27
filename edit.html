@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Data Unit - OtoCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #fafafa; color: #111111; letter-spacing: -0.01em; }
+        .navbar-clean { background: #ffffff; border-bottom: 1px solid #eaeaea; }
+        .panel-card { background: #ffffff; border: 1px solid #eaeaea; border-radius: 12px; padding: 32px; }
+        .form-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #555555; font-weight: 600; margin-bottom: 8px; }
+        .form-control, .form-select { border-radius: 8px; border: 1px solid #eaeaea; padding: 10px 14px; font-size: 0.9rem; }
+        .form-control:focus, .form-select:focus { border-color: #111111; box-shadow: none; background-color: #fff; }
+        .section-divider { border-top: 1px dashed #eaeaea; margin: 28px 0; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-clean py-3 mb-5">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-dark m-0" href="armada.html">
+                <i class="bi bi-arrow-left me-2 text-muted"></i> Edit Data Unit
+            </a>
+            <a href="armada.html" class="btn btn-sm btn-light border px-3 fw-medium">Batal</a>
+        </div>
+    </nav>
+
+    <div class="container mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="panel-card">
+                    <form id="formEditMotor">
+                        <h5 class="fw-bold mb-4">Informasi Utama</h5>
+                        
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Nama Kendaraan</label>
+                                <input type="text" id="nama" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Nomor Plat</label>
+                                <input type="text" id="plat" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Jenis Transmisi</label>
+                                <select id="jenis" class="form-select">
+                                    <option value="Matic">Matic</option>
+                                    <option value="Manual/Bebek">Manual/Bebek</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Kilometer (KM) Sekarang</label>
+                                <input type="number" id="km_sekarang" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="section-divider"></div>
+                        <h5 class="fw-bold mb-2">Riwayat Penggantian Komponen</h5>
+                        <p class="text-muted small mb-4">Sesuaikan data tanggal dan kilometer terakhir kali pengerjaan servis dilakukan</p>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6"><label class="form-label">Tgl Ganti Oli</label><input type="date" id="tgl_oli" class="form-control"></div>
+                            <div class="col-6"><label class="form-label">KM Ganti Oli</label><input type="number" id="km_oli" class="form-control"></div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6"><label class="form-label">Tgl Tune-Up Mesin</label><input type="date" id="tgl_mesin" class="form-control"></div>
+                            <div class="col-6"><label class="form-label">KM Tune-Up Mesin</label><input type="number" id="km_mesin" class="form-control"></div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6"><label class="form-label">Tgl Servis CVT/Rantai</label><input type="date" id="tgl_cvt" class="form-control"></div>
+                            <div class="col-6"><label class="form-label">KM Servis CVT/Rantai</label><input type="number" id="km_cvt" class="form-control"></div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-6"><label class="form-label">Tgl Servis Rem/Kaki</label><input type="date" id="tgl_kaki" class="form-control"></div>
+                            <div class="col-6"><label class="form-label">KM Servis Rem/Kaki</label><input type="number" id="km_kaki" class="form-control"></div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-6"><label class="form-label">Tgl Sistem Kelistrikan</label><input type="date" id="tgl_listrik" class="form-control"></div>
+                            <div class="col-6"><label class="form-label">KM Sistem Kelistrikan</label><input type="number" id="km_listrik" class="form-control"></div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-dark fw-medium py-2.5">Simpan Perubahan Telemetri</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const motorId = parseInt(urlParams.get('id'));
+
+        let kendaraanList = JSON.parse(localStorage.getItem('kendaraan')) || [];
+        const idx = kendaraanList.findIndex(m => m.id === motorId);
+        const motor = kendaraanList[idx];
+
+        if (motor) {
+            document.getElementById('nama').value = motor.nama;
+            document.getElementById('plat').value = motor.plat;
+            document.getElementById('jenis').value = motor.jenis;
+            document.getElementById('km_sekarang').value = motor.km_sekarang;
+            document.getElementById('tgl_oli').value = motor.tgl_oli;
+            document.getElementById('km_oli').value = motor.km_oli;
+            document.getElementById('tgl_mesin').value = motor.tgl_mesin;
+            document.getElementById('km_mesin').value = motor.km_mesin;
+            document.getElementById('tgl_cvt').value = motor.tgl_cvt;
+            document.getElementById('km_cvt').value = motor.km_cvt;
+            document.getElementById('tgl_kaki').value = motor.tgl_kaki;
+            document.getElementById('km_kaki').value = motor.km_kaki;
+            document.getElementById('tgl_listrik').value = motor.tgl_listrik;
+            document.getElementById('km_listrik').value = motor.km_listrik;
+        }
+
+        document.getElementById('formEditMotor').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (idx !== -1) {
+                kendaraanList[idx] = {
+                    id: motorId,
+                    nama: document.getElementById('nama').value,
+                    plat: document.getElementById('plat').value,
+                    jenis: document.getElementById('jenis').value,
+                    km_sekarang: parseInt(document.getElementById('km_sekarang').value),
+                    tgl_oli: document.getElementById('tgl_oli').value,
+                    km_oli: parseInt(document.getElementById('km_oli').value),
+                    tgl_mesin: document.getElementById('tgl_mesin').value,
+                    km_mesin: parseInt(document.getElementById('km_mesin').value),
+                    tgl_cvt: document.getElementById('tgl_cvt').value,
+                    km_cvt: parseInt(document.getElementById('km_cvt').value),
+                    tgl_kaki: document.getElementById('tgl_kaki').value,
+                    km_kaki: parseInt(document.getElementById('km_kaki').value),
+                    tgl_listrik: document.getElementById('tgl_listrik').value,
+                    km_listrik: parseInt(document.getElementById('km_listrik').value)
+                };
+                localStorage.setItem('kendaraan', JSON.stringify(kendaraanList));
+                
+                // DIUBAH: Mengarah langsung ke file lokal armada.html
+                window.location.href = 'armada.html';
+            }
+        });
+    </script>
+</body>
+</html>
